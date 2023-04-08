@@ -6,7 +6,12 @@ export function ThemeToggle() {
   const { setTheme, theme } = useTheme();
 
   return (
-    <Button onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+    <Button
+      variant="ghost"
+      size="sm"
+      aria-label={"Toggle theme"}
+      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+    >
       {(!theme || theme === "light") && (
         <Sun className="rotate-0 scale-100 transition-all hover:text-slate-900 dark:-rotate-90 dark:scale-0 dark:text-slate-400 dark:hover:text-slate-100" />
       )}

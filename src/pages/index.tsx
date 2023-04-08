@@ -7,6 +7,8 @@ import { CompanySelect } from "@/components/CompanySelect";
 import { Jobpost } from "@/components/JobPost";
 import { Heading } from "@/components/Heading";
 import { Input } from "@/ui/Input";
+import { Favorite } from "@/components/Favorite";
+import { useFavorites } from "@/hooks/useFavorites";
 
 export default function Home({
   posts,
@@ -14,6 +16,7 @@ export default function Home({
   const [sortType, setSortType] = useState<sortOption>("max_salary_desc");
   const [companyFilter, setCompanyFilter] = useState(null);
   const [search, setSearch] = useState("");
+  const { favorites, setFavorite } = useFavorites();
 
   const companies = posts
     .reduce<string[]>(
@@ -71,7 +74,16 @@ export default function Home({
       </div>
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3 mt-5">
         {sortedPosts.map((d) => (
-          <Jobpost key={d.finnUrl} post={d} />
+          <Jobpost
+            key={d.finnUrl}
+            post={d}
+            favoriteButton={
+              <Favorite
+                toggleFavorite={() => setFavorite(d)}
+                isFavorite={d.finnUrl in (favorites ?? {})}
+              />
+            }
+          />
         ))}
       </div>
     </div>

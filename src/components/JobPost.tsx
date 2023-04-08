@@ -4,12 +4,21 @@ import { Card } from "./Card";
 const formatToThousand = (salary: number) =>
   salary?.toLocaleString("no-NB", { useGrouping: true });
 
-export function Jobpost({ post }: { post: Post }) {
+export function Jobpost({
+  post,
+  favoriteButton,
+}: {
+  post: Post;
+  favoriteButton: React.ReactNode;
+}) {
   const { imageUrl, title, salaryMin, salaryMax, location, finnUrl, company } =
     post;
   return (
     <a href={finnUrl} target="_blank">
       <Card>
+        <div className="absolute flex flex-row-reverse pr-6 w-full">
+          {favoriteButton}
+        </div>
         <div className="flex items-center justify-center md:h-32 h-32 overflow-hidden">
           {/* eslint-disable-next-line @next/next/no-img-element*/}
           <img

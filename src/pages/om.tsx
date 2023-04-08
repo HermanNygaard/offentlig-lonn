@@ -1,6 +1,9 @@
 import { Heading } from "@/components/Heading";
+import { GetStaticProps, InferGetStaticPropsType } from "next";
 
-export default function Om() {
+export default function Om({
+  timestamp,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <div className="container">
       <Heading>Om offentlig lønnsoversikt</Heading>
@@ -15,6 +18,29 @@ export default function Om() {
         lønnsnivå, vil ikke dette reflekteres i denne oversikten. Nettsiden
         oppdateres én gang daglig.
       </p>
+      <p>
+        Lønnoversikt sist oppdatert:{" "}
+        {new Date(timestamp).toLocaleString("no-NB", {
+          year: "numeric",
+          month: "long",
+          weekday: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </p>
     </div>
   );
 }
+
+export const getStaticProps: GetStaticProps<{
+  timestamp: number;
+}> = async () => {
+  return {
+    props: {
+      timestamp: Date.now(),
+    },
+    // Revalidate daily
+    revalidate: 60 * 60 * 24,
+  };
+};

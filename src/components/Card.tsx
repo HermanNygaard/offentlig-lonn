@@ -4,7 +4,7 @@ export function Card({ className, children, ...props }: CardProps) {
   return (
     <div
       className={
-        "relative h-72 rounded-lg border border-slate-200 bg-transparent p-4  shadow-md transition-shadow hover:shadow-lg dark:border-slate-700 dark:text-slate-50"
+        "relative h-72 rounded-lg border border-slate-200 bg-transparent p-4 pt-2 shadow-md transition-shadow hover:shadow-lg dark:border-slate-700 dark:text-slate-50"
       }
       {...props}
     >

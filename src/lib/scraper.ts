@@ -3,6 +3,7 @@ import { devData } from "./devData";
 import { extractSalariesFromPage } from "./extractSalariesFromPage";
 import { getNextDDTag } from "./helpers";
 import Redis from "ioredis";
+import { isDev } from "./constants";
 
 const generateQuery = (page: number) =>
   `https://www.finn.no/job/fulltime/search.html?job_sector=1812&occupation=0.23&page=${page}&q=kr&sort=PUBLISHED_DESC`;
@@ -84,6 +85,9 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
     await redis.set(finnCodes[originalIndex], JSON.stringify(salary));
     salaries.push(salary);
   }
+  if (isDev) {
+    return salaries;
+  }
   return salaries.filter((salary) => salary.salaryMin > 100000);
 }
 
@@ -94,7 +98,7 @@ export async function getAllPageNumbers(doc: string) {
 }
 
 export async function scrapeAds(): Promise<Post[]> {
-  if (process.env.NODE_ENV === "development") {
+  if (isDev) {
     return devData;
   }
   const firstPage = await fetch(generateQuery(1));
