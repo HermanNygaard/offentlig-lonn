@@ -24,7 +24,7 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   const $ = cheerio.load(html);
 
   // Find all anchor tags that match the specified format
-  const links = $("a[id][href].ads__unit__link")
+  const links = $("a[id][href].sf-search-ad-link")
     .map((_, link) => {
       const href = $(link).attr("href");
       return href;
@@ -33,28 +33,14 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
 
   // todo order of links / finnCodes is important for published order, or last modified date
   const finnCodes = links.map((link) => link.match(/finnkode=(\d+)/)[1]);
-  console.log(finnCodes);
-  const redis = new Redis(process.env.REDIS_URL);
+  console.log({ finnCodes });
 
   // todo. redis get all for historic old jobposts?
-  const cache = await redis.mget(finnCodes);
   const salaries = [];
-  const docsToFetch: Promise<{
-    doc: string;
-    originalIndex: number;
-  }>[] = [];
-  cache.forEach((c, i) => {
-    if (c) {
-      console.log("CACHE HIT!");
-      salaries.push(JSON.parse(c));
-    } else {
-      console.log("CACHE MISS!" + c + finnCodes[i]);
-      docsToFetch.push(
-        fetch(links[i]).then((res) =>
-          res.text().then((doc) => ({ doc, originalIndex: i }))
-        )
-      );
-    }
+  const docsToFetch = links.map((l, i) => {
+    return fetch(l).then((res) =>
+      res.text().then((doc) => ({ doc, originalIndex: i }))
+    );
   });
   const rawDocuments = await Promise.all(docsToFetch);
   for (let i = 0; i < rawDocuments.length; i++) {
@@ -82,12 +68,9 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
       location: "Oslo",
       imageUrl,
     };
-    await redis.set(finnCodes[originalIndex], JSON.stringify(salary));
     salaries.push(salary);
   }
-  if (isDev) {
-    return salaries;
-  }
+
   return salaries.filter((salary) => salary.salaryMin > 100000);
 }
 
