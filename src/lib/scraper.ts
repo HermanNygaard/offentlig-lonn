@@ -32,16 +32,16 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
     .toArray();
 
   // todo order of links / finnCodes is important for published order, or last modified date
-  const finnCodes = links.map((link) => link.match(/finnkode=(\d+)/)[1]);
+  const finnCodes = links.map((link) => link.match(/finnkode=(\d+)/)?.[1]);
   console.log({ finnCodes });
 
   // todo. redis get all for historic old jobposts?
   const salaries = [];
-  const docsToFetch = links.map((l, i) => {
-    return fetch(l).then((res) =>
+  const docsToFetch = links.map((l, i) =>
+    fetch(l).then((res) =>
       res.text().then((doc) => ({ doc, originalIndex: i }))
-    );
-  });
+    )
+  );
   const rawDocuments = await Promise.all(docsToFetch);
   for (let i = 0; i < rawDocuments.length; i++) {
     const { doc, originalIndex } = rawDocuments[i];
@@ -49,13 +49,13 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
 
     // Job posts sometimes have more than one salary range,
     // eg. for junior and senior. This
-    const allSalaries = extractSalariesFromPage(doc);
-    const jobTitle = getNextDDTag($, "Stillingstittel");
-    const company = getNextDDTag($, "Arbeidsgiver");
-    const imageUrl =
-      $('a[data-controller*="trackShow"][data-controller*="Logo"] > img').attr(
-        "src"
-      ) ?? "";
+    const allSalaries = extractSalariesFromPage(
+      $("body main article section").text()
+    );
+    const jobTitle = $("h2").eq(1).text();
+    const image = $("img[alt*='logo']");
+    const company = image.attr("alt")?.split(" ")?.[0] ?? "";
+    const imageUrl = image.attr("src") ?? "";
 
     const salaryMin = Math.min(...allSalaries);
     const salaryMax = Math.max(...allSalaries);
@@ -74,20 +74,20 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   return salaries.filter((salary) => salary.salaryMin > 100000);
 }
 
-export async function getAllPageNumbers(doc: string) {
+function getLastPageNumber(doc: string) {
   const $ = cheerio.load(doc);
-  const lastPageNum = parseInt($("a.pagination__page").last().text());
-  return Array.from({ length: lastPageNum }, (_, i) => i + 1);
+  const pages = $('a[aria-label^="Side"]');
+  const lastPage = Math.max(
+    ...pages.map((i, el) => parseInt($(el).text())).get()
+  );
+  return Array.from({ length: lastPage }, (_, i) => i + 1);
 }
 
 export async function scrapeAds(): Promise<Post[]> {
-  if (isDev) {
-    return devData;
-  }
   const firstPage = await fetch(generateQuery(1));
   const html = await firstPage.text();
 
-  const allPageNumbers = await getAllPageNumbers(html);
+  const allPageNumbers = getLastPageNumber(html);
   const pages = await Promise.all(allPageNumbers.map(scrapeAdPage));
   const uniqueUrls = pages.flat().reduce<Post[]>((names, item) => {
     if (!names.find((it) => it.finnUrl === item.finnUrl)) {
