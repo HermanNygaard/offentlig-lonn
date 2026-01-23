@@ -168,6 +168,16 @@ describe("extractSalaryRangesFromHtml", () => {
     const result = extractSalaryRangesFromHtml(html);
     expect(result).toEqual(expected);
   });
+  test("with og separator", () => {
+    const html = `
+      <body>
+        Salary range: kr 800 000 og 1 050 000
+      </body>
+    `;
+    const expected = ["kr 800 000 og 1 050 000"];
+    const result = extractSalaryRangesFromHtml(html);
+    expect(result).toEqual(expected);
+  });
 });
 
 describe("postfix kr", () => {
