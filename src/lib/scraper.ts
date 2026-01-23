@@ -6,7 +6,7 @@ import Redis from "ioredis";
 import { isDev } from "./constants";
 
 const generateQuery = (page: number) =>
-  `https://www.finn.no/job/fulltime/search.html?job_sector=1812&occupation=0.23&page=${page}&q=kr&sort=PUBLISHED_DESC`;
+  `https://www.finn.no/job/search?job_sector=1812&occupation=0.23&page=${page}&q=kr&sort=PUBLISHED_DESC`;
 
 export interface Post {
   title: string;
@@ -24,7 +24,7 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   const $ = cheerio.load(html);
 
   // Find all anchor tags that match the specified format
-  const links = $("a[id][href].sf-search-ad-link")
+  const links = $("article a")
     .map((_, link) => {
       const href = $(link).attr("href");
       return href;
@@ -32,15 +32,15 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
     .toArray();
 
   // todo order of links / finnCodes is important for published order, or last modified date
-  const finnCodes = links.map((link) => link.match(/finnkode=(\d+)/)?.[1]);
+  const finnCodes = links.map((link) => link.match(/\/ad\/(\d+)/)?.[1]);
   console.log({ finnCodes });
 
   // todo. redis get all for historic old jobposts?
   const salaries = [];
   const docsToFetch = links.map((l, i) =>
     fetch(l).then((res) =>
-      res.text().then((doc) => ({ doc, originalIndex: i }))
-    )
+      res.text().then((doc) => ({ doc, originalIndex: i })),
+    ),
   );
   const rawDocuments = await Promise.all(docsToFetch);
   for (let i = 0; i < rawDocuments.length; i++) {
@@ -50,7 +50,7 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
     // Job posts sometimes have more than one salary range,
     // eg. for junior and senior. This
     const allSalaries = extractSalariesFromPage(
-      $("body main article section").text()
+      $("body main article section").text(),
     );
     const jobTitle = $("h2").eq(1).text();
     const image = $("img[alt*='logo']");
@@ -74,11 +74,11 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   return salaries.filter((salary) => salary.salaryMin > 100000);
 }
 
-function getLastPageNumber(doc: string) {
+export function getLastPageNumber(doc: string) {
   const $ = cheerio.load(doc);
   const pages = $('a[aria-label^="Side"]');
   const lastPage = Math.max(
-    ...pages.map((i, el) => parseInt($(el).text())).get()
+    ...pages.map((i, el) => parseInt($(el).text())).get(),
   );
   return Array.from({ length: lastPage }, (_, i) => i + 1);
 }

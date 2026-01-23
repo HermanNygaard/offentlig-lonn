@@ -25,7 +25,7 @@ export function extractNumbersFromSalaryRanges(salaries: string[] = []) {
   const regex = /\d+(?:[\s.]\d+)*/g;
 
   const numbers = salaries?.flatMap((str) =>
-    str.match(regex)?.map((num) => parseInt(num.replace(/[\s.]/g, "")))
+    str.match(regex)?.map((num) => parseInt(num.replace(/[\s.]/g, ""))),
   );
 
   return numbers ?? [];
