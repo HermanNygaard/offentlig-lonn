@@ -36,7 +36,7 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   console.log({ finnCodes });
 
   // todo. redis get all for historic old jobposts?
-  const salaries = [];
+  const salaries: Post[] = [];
   const docsToFetch = links.map((l, i) =>
     fetch(l).then((res) =>
       res.text().then((doc) => ({ doc, originalIndex: i })),

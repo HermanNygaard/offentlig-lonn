@@ -7,9 +7,9 @@ export function extractSalaryRangesFromHtml(doc: string) {
   const postfixMatches = doc.match(postFixKrRegex);
   const lastMatches = doc.match(krAtLast);
 
-  if (extractNumbersFromSalaryRanges(prefixMatches).length >= 2) {
+  if (prefixMatches && extractNumbersFromSalaryRanges(prefixMatches).length >= 2) {
     return prefixMatches;
-  } else if (extractNumbersFromSalaryRanges(postfixMatches).length >= 2) {
+  } else if (postfixMatches && extractNumbersFromSalaryRanges(postfixMatches).length >= 2) {
     return postfixMatches;
   }
   return lastMatches;
@@ -24,11 +24,16 @@ export function extractSalaryRangesFromHtml(doc: string) {
 export function extractNumbersFromSalaryRanges(salaries: string[] = []) {
   const regex = /\d+(?:[\s.]\d+)*/g;
 
-  const numbers = salaries?.flatMap((str) =>
-    str.match(regex)?.map((num) => parseInt(num.replace(/[\s.]/g, ""))),
-  );
+  const numbers = salaries.flatMap((str) => {
+    const matches = str.match(regex);
+    if (!matches) {
+      return [];
+    }
 
-  return numbers ?? [];
+    return matches.map((num) => parseInt(num.replace(/[\s.]/g, "")));
+  });
+
+  return numbers;
 }
 
 /**
@@ -40,6 +45,9 @@ export function extractNumbersFromSalaryRanges(salaries: string[] = []) {
 export function extractSalariesFromPage(document: string) {
   // ["kr. 4 - 4400". "kr. 400 - 500"]
   const salariesStrings = extractSalaryRangesFromHtml(document);
+  if (!salariesStrings) {
+    return [];
+  }
   const allSalaries = extractNumbersFromSalaryRanges(salariesStrings);
   return allSalaries;
 }
