@@ -1,20 +1,18 @@
-import { GetStaticProps, InferGetStaticPropsType } from "next";
-import Head from "next/head";
+"use client";
+
 import { useState } from "react";
 import { sortOption, SortPosts } from "@/components/SortPosts";
-import { Post, scrapeAds } from "@/lib/scraper";
 import { CompanySelect } from "@/components/CompanySelect";
 import { Jobpost } from "@/components/JobPost";
 import { Heading } from "@/components/Heading";
 import { Input } from "@/ui/Input";
 import { Favorite } from "@/components/Favorite";
 import { useFavorites } from "@/hooks/useFavorites";
+import { Post } from "@/lib/scraper";
 
-export default function Home({
-  posts,
-}: InferGetStaticPropsType<typeof getStaticProps>) {
+export function HomeClient({ posts }: { posts: Post[] }) {
   const [sortType, setSortType] = useState<sortOption>("max_salary_desc");
-  const [companyFilter, setCompanyFilter] = useState(null);
+  const [companyFilter, setCompanyFilter] = useState("");
   const [search, setSearch] = useState("");
   const { favorites, setFavorite } = useFavorites();
 
@@ -22,7 +20,7 @@ export default function Home({
     .reduce<string[]>(
       (prev, { company }) =>
         prev.includes(company) ? prev : [...prev, company],
-      []
+      [],
     )
     .sort();
 
@@ -41,14 +39,11 @@ export default function Home({
     })
     .filter((p) => (companyFilter ? p.company === companyFilter : p))
     .filter((p) =>
-      search ? p.title.toLowerCase().includes(search.toLowerCase()) : p
+      search ? p.title.toLowerCase().includes(search.toLowerCase()) : p,
     );
 
   return (
     <div className="container">
-      <Head>
-        <title>Offentlig lønnsoversikt</title>
-      </Head>
       <Heading>Offentlig lønn</Heading>
       <h2 className="text-lg text-slate-700 dark:text-slate-300 mb-5 mt-2 pl-0.5">
         Lønnsoversikt over offentlige stillinger innen IT-utvikling.
@@ -89,17 +84,3 @@ export default function Home({
     </div>
   );
 }
-
-export const getStaticProps: GetStaticProps<{
-  posts: Post[];
-}> = async () => {
-  const posts = await scrapeAds();
-
-  return {
-    props: {
-      posts,
-    },
-    // Revalidate daily
-    revalidate: 60 * 60 * 24,
-  };
-};
