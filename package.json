@@ -12,6 +12,7 @@
   "dependencies": {
     "@radix-ui/react-select": "^1.2.1",
     "@tailwindcss/line-clamp": "^0.4.4",
+    "@vercel/analytics": "^1.6.1",
     "class-variance-authority": "^0.5.1",
     "clsx": "^1.2.1",
     "lucide-react": "^0.129.0",

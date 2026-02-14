@@ -5,6 +5,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { cn } from "@/lib/util";
 import { Providers } from "./providers";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Offentlig lønnsoversikt",
@@ -26,6 +27,7 @@ export default function RootLayout({
           <div className="flex-grow">{children}</div>
           <Footer />
         </Providers>
+        <Analytics />
       </body>
     </html>
   );
