@@ -74,7 +74,7 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
 
     return salaries.filter((salary) => salary.salaryMin > 100000);
   } catch (error) {
-    console.error(`Failed to scrape page ${pageNumber}:`, error);
+    console.error(`Failed to scrape page ${pageNumber} (${generateQuery(pageNumber)}):`, error);
     return [];
   }
 }
@@ -104,7 +104,7 @@ export async function scrapeAds(): Promise<Post[]> {
 
     return uniqueUrls;
   } catch (error) {
-    console.error("Failed to scrape ads, using fallback data:", error);
+    console.error("Failed to scrape ads from finn.no, using fallback data. Error details:", error);
     return devData;
   }
 }
