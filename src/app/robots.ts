@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: "*",
       allow: "/",
     },
-    sitemap: "https://offentliglonn.no/sitemap.xml",
+    sitemap: "https://offentlig-lonn.vercel.app/sitemap.xml",
   };
 }
