@@ -43,6 +43,22 @@ test("extracts salary range with trailing som and line break", () => {
   expect(res).toEqual([821000, 1050000]);
 });
 
+test("extracts salary range with kr fra til avhengig", () => {
+  const str =
+    "<body>Du vil få en årslønn innenfor lønnsspenn kr  fra 790 000 til 910 000 avhengig av erfaring.</body>";
+  const res = extractSalariesFromPage(str);
+
+  expect(res).toEqual([790000, 910000]);
+});
+
+test("extracts salary range with stillingskode and nbsp spacing", () => {
+  const str =
+    "<body>Stillingen lønnes for tiden som rådgiver/seniorrådgiver (stillingskode 1434/1364) i lønnsspenn fra kr 750\u00A0000 - 1\u00A0020\u00A0000 , avhengig av kvalifikasjoner. For særlig godt kvalifiserte søkere kan høyere lønn vurderes.</body>";
+  const res = extractSalariesFromPage(str);
+
+  expect(res).toEqual([750000, 1020000]);
+});
+
 describe("extractSalaryRangesFromHtml", () => {
   test("should extract all salary ranges from HTML", () => {
     const html = `
