@@ -8,16 +8,24 @@ import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://offentlig-lonn.vercel.app"),
   title: "Offentlig lønnsoversikt",
   description:
     "Lønnsoversikt over offentlige stillinger innen IT-utvikling. Finn lønnsinformasjon fra offentlige jobbannonser.",
+  alternates: {
+    canonical: "/",
+  },
   verification: {
     google: "xzU-LCpk1wvB81RLDdmGOs_Zd0JNTx555tDIT2Ua0-Q",
   },
   icons: {
-    icon: "data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>",
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
   },
   openGraph: {
+    url: "/",
+    siteName: "Offentlig lønnsoversikt",
     title: "Offentlig lønnsoversikt",
     description:
       "Lønnsoversikt over offentlige stillinger innen IT-utvikling. Finn lønnsinformasjon fra offentlige jobbannonser.",
