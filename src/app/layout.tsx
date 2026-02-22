@@ -9,7 +9,8 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Offentlig lønnsoversikt",
-  description: "Lønnsoversikt over offentlige stillinger innen IT-utvikling. Finn lønnsinformasjon fra offentlige jobbannonser.",
+  description:
+    "Lønnsoversikt over offentlige stillinger innen IT-utvikling. Finn lønnsinformasjon fra offentlige jobbannonser.",
   verification: {
     google: "xzU-LCpk1wvB81RLDdmGOs_Zd0JNTx555tDIT2Ua0-Q",
   },
@@ -18,20 +19,21 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Offentlig lønnsoversikt",
-    description: "Lønnsoversikt over offentlige stillinger innen IT-utvikling. Finn lønnsinformasjon fra offentlige jobbannonser.",
+    description:
+      "Lønnsoversikt over offentlige stillinger innen IT-utvikling. Finn lønnsinformasjon fra offentlige jobbannonser.",
     locale: "no_NO",
     type: "website",
   },
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="no" suppressHydrationWarning>
-      <body className={cn("flex flex-col min-h-screen dark:bg-slate-900 antialiased")}>
+      <body
+        className={cn(
+          "flex flex-col min-h-screen dark:bg-slate-900 antialiased",
+        )}
+      >
         <Providers>
           <Navbar />
           <div className="flex-grow">{children}</div>

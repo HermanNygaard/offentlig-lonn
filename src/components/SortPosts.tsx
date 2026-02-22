@@ -14,7 +14,7 @@ const sortOptions = [
   "min_salary_asc",
 ] as const;
 
-export type sortOption = typeof sortOptions[number];
+export type sortOption = (typeof sortOptions)[number];
 
 const sortOptionsStrings: Record<sortOption, string> = {
   max_salary_desc: "Høyeste makslønn",

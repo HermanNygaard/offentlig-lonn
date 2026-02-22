@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 
 export const getNextDDTag = (
   cheerio: cheerio.CheerioAPI,
-  dtTagName: string
+  dtTagName: string,
 ) => {
   const dtTag = cheerio("dt")
     .filter(function () {

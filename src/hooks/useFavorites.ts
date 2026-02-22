@@ -5,7 +5,7 @@ import { useMemo } from "react";
 export function useFavorites() {
   const [favorites, setFavorites] = useLocalStorage<Record<string, Post>>(
     "favorites",
-    {}
+    {},
   );
 
   return useMemo(() => {

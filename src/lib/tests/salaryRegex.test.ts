@@ -23,7 +23,7 @@ describe("Regular expression to extract two numbers from string", () => {
         "kr. 701 300 - kr. 864 500",
         "701 300",
         "864 500",
-      ])
+      ]),
     );
   });
 
@@ -31,7 +31,7 @@ describe("Regular expression to extract two numbers from string", () => {
     const str = "kr 500 000 til 565 000";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr 500 000 til 565 000", "500 000", "565 000"])
+      expect.arrayContaining(["kr 500 000 til 565 000", "500 000", "565 000"]),
     );
   });
 
@@ -39,7 +39,7 @@ describe("Regular expression to extract two numbers from string", () => {
     const str = "kr.701 300–kr.864 500";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr.701 300–kr.864 500", "701 300", "864 500"])
+      expect.arrayContaining(["kr.701 300–kr.864 500", "701 300", "864 500"]),
     );
   });
 
@@ -47,7 +47,7 @@ describe("Regular expression to extract two numbers from string", () => {
     const str = "kr 500 000 - 565 000";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr 500 000 - 565 000", "500 000", "565 000"])
+      expect.arrayContaining(["kr 500 000 - 565 000", "500 000", "565 000"]),
     );
   });
 
@@ -55,7 +55,7 @@ describe("Regular expression to extract two numbers from string", () => {
     const str = "kr. 701 300 - 864 500";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr. 701 300 - 864 500", "701 300", "864 500"])
+      expect.arrayContaining(["kr. 701 300 - 864 500", "701 300", "864 500"]),
     );
   });
 
@@ -63,21 +63,21 @@ describe("Regular expression to extract two numbers from string", () => {
     const str = "kr 500 000-565 000";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr 500 000-565 000", "500 000", "565 000"])
+      expect.arrayContaining(["kr 500 000-565 000", "500 000", "565 000"]),
     );
   });
   it('matches "kr 500 000-565 000"', () => {
     const str = "kr 750.000 – 920.000";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr 750.000 – 920.000", "750.000", "920.000"])
+      expect.arrayContaining(["kr 750.000 – 920.000", "750.000", "920.000"]),
     );
   });
   it("matches kr. 750 000 – 950 000", () => {
     const str = "kr. 750 000 – 950 000";
     const result = regex.exec(str).map((e) => e.trim());
     expect(result).toEqual(
-      expect.arrayContaining(["kr. 750 000 – 950 000", "750 000", "950 000"])
+      expect.arrayContaining(["kr. 750 000 – 950 000", "750 000", "950 000"]),
     );
   });
 });

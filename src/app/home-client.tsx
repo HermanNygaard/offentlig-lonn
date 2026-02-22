@@ -17,11 +17,9 @@ export function HomeClient({ posts }: { posts: Post[] }) {
   const { favorites, setFavorite } = useFavorites();
 
   const companies = posts
-    .reduce<string[]>(
-      (prev, { company }) =>
-        prev.includes(company) ? prev : [...prev, company],
-      [],
-    )
+    .reduce<
+      string[]
+    >((prev, { company }) => (prev.includes(company) ? prev : [...prev, company]), [])
     .sort();
 
   const sortedPosts = [...posts]

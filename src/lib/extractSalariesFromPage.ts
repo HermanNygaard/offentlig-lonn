@@ -7,9 +7,15 @@ export function extractSalaryRangesFromHtml(doc: string) {
   const postfixMatches = doc.match(postFixKrRegex);
   const lastMatches = doc.match(krAtLast);
 
-  if (prefixMatches && extractNumbersFromSalaryRanges(prefixMatches).length >= 2) {
+  if (
+    prefixMatches &&
+    extractNumbersFromSalaryRanges(prefixMatches).length >= 2
+  ) {
     return prefixMatches;
-  } else if (postfixMatches && extractNumbersFromSalaryRanges(postfixMatches).length >= 2) {
+  } else if (
+    postfixMatches &&
+    extractNumbersFromSalaryRanges(postfixMatches).length >= 2
+  ) {
     return postfixMatches;
   }
   return lastMatches;
