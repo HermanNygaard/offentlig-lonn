@@ -27,6 +27,22 @@ test("exctracts the min and max from two salary ranges", () => {
   expect(res).toEqual([630000, 860000]);
 });
 
+test("extracts salary range with fra prefix and trailing text", () => {
+  const str =
+    "<body>Lønn er satt fra kr 750 000 - 1 020 000 , avhengig av kompetanse.</body>";
+  const res = extractSalariesFromPage(str);
+
+  expect(res).toEqual([750000, 1020000]);
+});
+
+test("extracts salary range with trailing som and line break", () => {
+  const str = `<body>Du vil få en årslønn innenfor spennet kr 821 000 - 1 050 000 som
+  vurderes ut fra kvalifikasjoner.</body>`;
+  const res = extractSalariesFromPage(str);
+
+  expect(res).toEqual([821000, 1050000]);
+});
+
 describe("extractSalaryRangesFromHtml", () => {
   test("should extract all salary ranges from HTML", () => {
     const html = `
@@ -94,7 +110,7 @@ describe("extractSalaryRangesFromHtml", () => {
         Here are two salary ranges:  kr. 700 000,- til kr. 900 000,-"
       </body>
     `;
-    const expected = ["kr. 700 000 - 900 000"];
+    const expected = ["kr. 700 000  til kr. 900 000 "];
     const result = extractSalaryRangesFromHtml(html);
     expect(result).toEqual(expected);
   });
@@ -144,7 +160,7 @@ describe("extractSalaryRangesFromHtml", () => {
         Here are two salary ranges: 765 600 kr 1 024 200 kr.
       </body>
     `;
-    const expected = [" 765 600 kr 1 024 200 kr"];
+    const expected = ["765 600 kr 1 024 200 kr"];
     const result = extractSalaryRangesFromHtml(html);
     expect(result).toEqual(expected);
   });
@@ -154,7 +170,7 @@ describe("extractSalaryRangesFromHtml", () => {
         Here are two salary ranges: 801 700 – 1 094 900 kr
       </body>
     `;
-    const expected = [" 801 700 – 1 094 900 kr"];
+    const expected = ["801 700 – 1 094 900 kr"];
     const result = extractSalaryRangesFromHtml(html);
     expect(result).toEqual(expected);
   });
@@ -209,6 +225,10 @@ describe("extract numbers", () => {
     expect(extractNumbersFromSalaryRanges(strings)).toEqual([
       800000, 900000, 50000, 1000000,
     ]);
+  });
+  test("with leading fra and trailing avhengig text", () => {
+    const strings = ["fra kr 750 000 - 1 020 000 , avhengig"];
+    expect(extractNumbersFromSalaryRanges(strings)).toEqual([750000, 1020000]);
   });
   test("postfix kr", () => {
     const strings = ["800 000 kr - 900 000 kr"];

@@ -1,11 +1,14 @@
 export function extractSalaryRangesFromHtml(doc: string) {
+  const normalizedDoc = doc.replace(/\(ltr\s*\d+\)/gi, " ").replace(/,-/g, " ");
+
   const prefixKrRegex =
-    /kr\.?\s*([\d,. ]+)\s*(?:-|–|til|og)\s*(?:kr)?\s*([\d,. ]+)/gi;
+    /kr\.?\s*([\d,. ]+)\s*(?:-|–|til|og)\s*(?:kr\.?)?\s*([\d,. ]+)/gi;
   const postFixKrRegex = /([\d. ]+)kr\.?\s*(?: -|–|til|og)\s*([\d,. ]+)(kr)?/gi;
-  const krAtLast = /([\d. ]+)(kr)?\.?\s*(?: -|–|til|og|)\s*([\d,. ]+)(kr)/gi;
-  const prefixMatches = doc.match(prefixKrRegex);
-  const postfixMatches = doc.match(postFixKrRegex);
-  const lastMatches = doc.match(krAtLast);
+  const krAtLast =
+    /\b(\d[\d. ]*)(kr)?\.?\s*(?:-|–|til|og)?\s*(\d[\d,. ]*)(kr)\b/gi;
+  const prefixMatches = normalizedDoc.match(prefixKrRegex);
+  const postfixMatches = normalizedDoc.match(postFixKrRegex);
+  const lastMatches = normalizedDoc.match(krAtLast);
 
   if (
     prefixMatches &&
