@@ -1,7 +1,5 @@
 import { Heading } from "@/components/Heading";
 
-export const revalidate = 86400;
-
 export default function OmPage() {
   const timestamp = Date.now();
 
@@ -14,10 +12,9 @@ export default function OmPage() {
         alle nivå velges.
       </p>
       <p>
-        Annonsespesifikk data er cachet i Redis, og vil for nå aldri
-        invalideres. Det vil si at om en annonse blir oppdatert med nytt
-        lønnsnivå, vil ikke dette reflekteres i denne oversikten. Nettsiden
-        oppdateres én gang daglig.
+        Annonsespesifikk data er cachet via Next.js fetch-cache, og vil for nå
+        aldri invalideres. Det vil si at om en annonse blir oppdatert med nytt
+        lønnsnivå, vil ikke dette reflekteres i denne oversikten.
       </p>
       <p>
         Lønnoversikt sist oppdatert:{" "}

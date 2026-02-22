@@ -1,9 +1,5 @@
 import * as cheerio from "cheerio";
-import { devData } from "./devData";
 import { extractSalariesFromPage } from "./extractSalariesFromPage";
-import { getNextDDTag } from "./helpers";
-import Redis from "ioredis";
-import { isDev } from "./constants";
 
 const generateQuery = (page: number) =>
   `https://www.finn.no/job/search?job_sector=1812&occupation=0.23&page=${page}&q=kr&sort=PUBLISHED_DESC`;
@@ -35,10 +31,9 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   const finnCodes = links.map((link) => link.match(/\/ad\/(\d+)/)?.[1]);
   console.log({ finnCodes });
 
-  // todo. redis get all for historic old jobposts?
   const salaries: Post[] = [];
   const docsToFetch = links.map((l, i) =>
-    fetch(l).then((res) =>
+    fetch(l, { cache: "force-cache" }).then((res) =>
       res.text().then((doc) => ({ doc, originalIndex: i })),
     ),
   );
