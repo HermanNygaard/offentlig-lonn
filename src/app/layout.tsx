@@ -7,6 +7,9 @@ import { cn } from "@/lib/util";
 import { Providers } from "./providers";
 import { Analytics } from "@vercel/analytics/next";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata: Metadata = {
   title: "Offentlig lønnsoversikt",
   description:
