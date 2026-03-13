@@ -10,7 +10,13 @@ import { Favorite } from "@/components/Favorite";
 import { useFavorites } from "@/hooks/useFavorites";
 import { Post } from "@/lib/scraper";
 
-export function HomeClient({ posts }: { posts: Post[] }) {
+export function HomeClient({
+  posts,
+  generatedAt,
+}: {
+  posts: Post[];
+  generatedAt: string;
+}) {
   const [sortType, setSortType] = useState<sortOption>("max_salary_desc");
   const [companyFilter, setCompanyFilter] = useState("");
   const [search, setSearch] = useState("");
@@ -78,6 +84,9 @@ export function HomeClient({ posts }: { posts: Post[] }) {
             }
           />
         ))}
+      </div>
+      <div className="mt-8 text-center">
+        Lønnsoversikt sist oppdatert: {generatedAt}
       </div>
     </div>
   );
