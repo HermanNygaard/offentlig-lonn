@@ -14,6 +14,36 @@ export interface Post {
   imageUrl: string;
 }
 
+export function extractJobTitle(doc: string): string {
+  const $ = cheerio.load(doc);
+  const structuredData = $('script[type="application/ld+json"]')
+    .map((_, element) => JSON.parse($(element).text()) as unknown)
+    .get();
+
+  for (const value of structuredData) {
+    const wrappedValue =
+      typeof value === "object" && value !== null && "script:ld+json" in value
+        ? value["script:ld+json"]
+        : value;
+    const entries = Array.isArray(wrappedValue) ? wrappedValue : [wrappedValue];
+
+    for (const entry of entries) {
+      if (
+        typeof entry === "object" &&
+        entry !== null &&
+        "@type" in entry &&
+        entry["@type"] === "JobPosting" &&
+        "title" in entry &&
+        typeof entry.title === "string"
+      ) {
+        return entry.title.trim();
+      }
+    }
+  }
+
+  return $("main h1").first().text().trim() || $("main h2").first().text().trim();
+}
+
 export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
   let res = await fetch(generateQuery(pageNumber));
   const html = await res.text();
@@ -49,7 +79,7 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
     const allSalaries = extractSalariesFromPage(
       $("body main article section").text(),
     );
-    const jobTitle = $("h2").eq(1).text();
+    const jobTitle = extractJobTitle(doc);
     const image = $("img[alt*='logo']");
     const company = image.attr("alt")?.split(" ")?.[0] ?? "";
     const imageUrl = image.attr("src") ?? "";
@@ -74,6 +104,10 @@ export async function scrapeAdPage(pageNumber: number): Promise<Post[]> {
 export function getLastPageNumber(doc: string) {
   const $ = cheerio.load(doc);
   const pages = $('a[aria-label^="Side"]');
+  if (pages.length === 0) {
+    return [1];
+  }
+
   const lastPage = Math.max(
     ...pages.map((i, el) => parseInt($(el).text())).get(),
   );

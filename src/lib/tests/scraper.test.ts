@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { getLastPageNumber } from "../scraper";
+import { extractJobTitle, getLastPageNumber } from "../scraper";
 
 test("get all page numbers", () => {
   const html =
@@ -7,4 +7,46 @@ test("get all page numbers", () => {
 
   const nPages = getLastPageNumber(html);
   expect(nPages).toEqual([1, 2, 3]);
+});
+
+test("uses the first page when FINN does not render pagination", () => {
+  const html = `
+    <main>
+      <article>
+        <a href="https://www.finn.no/job/ad/477206214">Job advert</a>
+      </article>
+    </main>
+  `;
+
+  expect(getLastPageNumber(html)).toEqual([1]);
+});
+
+test("gets the job title from the current FINN structured data", () => {
+  const html = `
+    <main>
+      <h2>FinOps-plattformingeniør</h2>
+      <h2>Kortversjonen</h2>
+      <h1>FinOps-plattformingeniør - optimaliser skyplattformen</h1>
+    </main>
+    <script type="application/ld+json">
+      {
+        "script:ld+json": {
+          "@context": "https://schema.org",
+          "@type": "JobPosting",
+          "title": "FinOps-plattformingeniør"
+        }
+      }
+    </script>
+  `;
+
+  expect(extractJobTitle(html)).toBe("FinOps-plattformingeniør");
+});
+
+test("falls back to the main heading when structured data is unavailable", () => {
+  const html = `
+    <header><h1>FINN Jobb</h1></header>
+    <main><h1>Seniorutvikler</h1><h2>Om arbeidsgiveren</h2></main>
+  `;
+
+  expect(extractJobTitle(html)).toBe("Seniorutvikler");
 });
